@@ -1,0 +1,14 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Перечень компаний";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+<hr/>
+<div>
+    @using (Html.BeginForm()) {
+        Html.RenderAction("CompanyListMaster");
+    }
+</div>

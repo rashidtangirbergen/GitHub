@@ -1,0 +1,22 @@
+﻿@{ var report = (Samruk.Web.Reports.XtraReportAuditForm) ViewData["Report"]; }
+@Html.DevExpress().DocumentViewer(
+    settings =>
+    {
+        settings.Name = "Форма «опросник»";
+        settings.SettingsReportViewer.PageByPage = false;
+        settings.Report = report;
+        settings.CallbackRouteValues = new
+        {
+            Controller = "Home",
+            Action = "DocumentViewerPartAudit",
+            auditId = report.AuditId
+        };
+        settings.ExportRouteValues = new
+        {
+            Controller = "Home",
+            Action = "ExportDocumentViewPartAudit",
+            auditId = report.AuditId
+        };
+        
+    }).GetHtml()
+

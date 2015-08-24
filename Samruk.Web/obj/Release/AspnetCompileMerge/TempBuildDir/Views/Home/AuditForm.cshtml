@@ -1,0 +1,57 @@
+﻿@using Samruk.Web.Models
+@model AuditDetailViewModel
+
+@{
+    ViewBag.Title = "Форма аудита";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.AuditId)
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Наименование</th>
+                    <th>Значение пользователя</th>
+                    <th>Значение аудитора</th>
+                    <th>Комментарий</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var index = 0; index < Model.Items.Count(); index++) {
+                    <tr>
+                        <td class="text-center">@(index + 1)</td>
+                        <td>@Model.Items[index].Key</td>
+                        <td class="text-center">@Model.Items[index].UserValue</td>
+                        <td>@Html.EditorFor(model => model.Items[index].AuditorValue)</td>
+                        <td>@Html.EditorFor(model => model.Items[index].Comment)</td>
+                        @Html.HiddenFor(model => model.Items[index].Id)
+                </tr>
+                }
+            </tbody>
+        </table>
+        <div class="form-group">
+            <div class="col-md-9">
+                <input type="submit" value="Сохранить" class="btn btn-default" />
+                <a href="@Url.Action("AuditFormReport", "Home",new{auditId = Model.AuditId})" target="_blank" class="btn btn-default">Выгрузка на печать</a>
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Отмена", "Index")
+</div>
+
+@section Scripts {
+    
+}

@@ -1,0 +1,148 @@
+﻿@using Samruk.Web.Models
+@model RegistrationDataViewModel
+
+@{
+    ViewBag.Title = "Регистрационные данные";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@{
+    var context = ApplicationDbContext.Create();
+    var countries = new SelectList(context.Countries.ToArray(), "Id", "");
+    var providers = new SelectList(context.ProviderTypes.ToArray(), "Id", "");
+    var legalForms = new SelectList(context.LegalForms.OrderBy(x => x.Enum).ToArray(), "Id", "");
+
+    var isResident = string.Empty;
+    var isNotResident = string.Empty;
+
+    if (Model.IsResident) {
+        isResident = "isResident";
+        isNotResident = "isNotResident hidden";
+    }
+    else {
+        isResident = "isResident hidden";
+        isNotResident = "isNotResident";
+    }
+}
+
+
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.OrganizationName, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.OrganizationName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.OrganizationName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsResident, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-8">
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(x => x.IsResident, true)
+                    Резидент
+                </label>
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(x => x.IsResident, false)
+                    Нерезидент
+                </label>
+                @Html.ValidationMessageFor(model => model.IsResident, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group @isNotResident">
+            @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.CountryId, countries, "Выберите страну резидентства...", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group @isResident">
+            @Html.LabelFor(model => model.Xin, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Xin, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Xin, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group @isNotResident">
+            @Html.LabelFor(model => model.TaxId, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.TaxId, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TaxId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProviderType, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.ProviderTypeId, providers, "Выберите тип поставщика...", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ProviderType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.LegalForm, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.LegalFormId, legalForms, "Выберите организационно-правовая форму...", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.LegalForm, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StateRegistrationCertificateNumber, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.StateRegistrationCertificateNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StateRegistrationCertificateNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StateRegistrationCertificateDate, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.StateRegistrationCertificateDate,"{0:yyyy-MM-dd}", new { type = "date", @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.StateRegistrationCertificateDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StateRegistrationCertificateIssuingAuthority, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.StateRegistrationCertificateIssuingAuthority, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StateRegistrationCertificateIssuingAuthority, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                @Html.ActionLink("Отмена", "Index",null, new { @class = "btn btn-default" })
+                <button type="submit" value="Сохранить" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-disk"></span>
+                    Сохранить
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+</div>
+
+@section Scripts {
+    <script>
+            $('input[name="@Html.NameFor(x=>x.IsResident)"]').change(function () {
+                debugger;
+                $('.isResident').toggleClass("hidden");
+                $('.isNotResident').toggleClass("hidden");
+            });
+    </script>
+}

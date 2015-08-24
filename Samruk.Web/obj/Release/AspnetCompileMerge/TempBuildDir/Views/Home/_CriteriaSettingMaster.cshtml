@@ -1,0 +1,65 @@
+@using System.Web.UI.WebControls
+@{
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    var grid = Html.DevExpress().GridView(
+        settings => {
+            settings.Name = "criteriaSettingMasterGrid";
+            settings.CallbackRouteValues = new { Controller = "Home", Action = "CriteriaSettingMaster" };
+            settings.Width = Unit.Percentage(100);
+
+            settings.KeyFieldName = "Id";
+
+            settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Home", Action = "CriteriaSettingAddNew" };
+            settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Home", Action = "CriteriaSettingEdit" };
+            settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Home", Action = "CriteriaSettingDelete" };
+            settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+            settings.SettingsBehavior.ConfirmDelete = true;
+            //settings.SettingsPopup.EditForm.Width = 600;
+            settings.Width = Unit.Percentage(100);
+
+            settings.CommandColumn.Visible = true;
+            settings.CommandColumn.ShowNewButton = true;
+            settings.CommandColumn.ShowDeleteButton = true;
+            settings.CommandColumn.ShowEditButton = true;
+
+
+            settings.Columns.Add(new GridViewDataColumn("Name", "Наименование критерия"));
+            settings.Columns.Add(x => {
+                x.FieldName = "Weight";
+                x.Caption = "Вес критерия";
+                x.ColumnType = MVCxGridViewColumnType.SpinEdit;
+                var spinEditProperties = x.PropertiesEdit as SpinEditProperties;
+                spinEditProperties.DisplayFormatString = "n1";
+                spinEditProperties.DisplayFormatInEditMode = true;
+                spinEditProperties.MinValue = 0;
+                spinEditProperties.MaxValue = 1000;
+                x.PropertiesEdit.DisplayFormatString = "n1";
+            });
+
+            settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = false;
+            settings.SettingsDetail.ShowDetailRow = false;
+
+            //settings.SetDetailRowTemplateContent(c => {
+            //    var note = DataBinder.Eval(c.DataItem, "Note");
+            //    if (note != null) {
+            //        ViewContext.Writer.Write("Примечание: <b>" + note + "</b>");
+            //    }
+
+            //    Html.RenderAction("PriceDetail", new { PriceId = DataBinder.Eval(c.DataItem, "Id") });
+            //});
+            settings.PreRender = (sender, e) => {
+                // ((MVCxGridView)sender).DetailRows.ExpandRow(0);
+            };
+        });
+
+    if (ViewData["EditError"] != null) {
+        grid.SetEditErrorText((string)ViewData["EditError"]);
+    }
+}
+@grid.BindToLINQ(string.Empty, string.Empty, (s, e) => {
+    e.QueryableSource = Model;
+    e.KeyExpression = "Id";
+}).GetHtml()

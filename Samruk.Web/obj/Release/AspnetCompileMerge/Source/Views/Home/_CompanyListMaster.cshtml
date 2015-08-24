@@ -1,0 +1,47 @@
+@using System.Web.UI.WebControls
+@{
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    var grid = Html.DevExpress().GridView(
+        settings => {
+            settings.Name = "companyListMasterGrid";
+            settings.CallbackRouteValues = new { Controller = "Home", Action = "CompanyListMaster" };
+            settings.Width = Unit.Percentage(100);
+
+            settings.KeyFieldName = "UserId";
+            settings.Width = Unit.Percentage(100);
+
+            settings.Columns.Add(new GridViewDataColumn("Xin", "ИИН/БИН"));
+            settings.Columns.Add(new GridViewDataColumn("CompanyName", "Наименование компании"));
+            settings.Columns.Add(new GridViewDataCheckColumn() {
+                Caption = "Был ли аудит",
+                FieldName = "IsAudit"
+            });
+            settings.Columns.Add(new GridViewDataColumn("UserTotal", "Итоговый балл пользователя"));
+            settings.Columns.Add(new GridViewDataColumn("AuditorTotal", "Итоговый балл аудитора"));
+
+            settings.Columns.Add(new GridViewDataHyperLinkColumn() {
+                Caption = "Действия",
+                FieldName = "UserId",
+                PropertiesHyperLinkEdit = {
+                    NavigateUrlFormatString = "/Home/AuditForm?userId={0}",
+                    TextFormatString = "Открыть",
+                   // TextField = "UserId",
+                    Text = "Открыть"
+                },
+            });
+            settings.PreRender = (sender, e) => {
+                // ((MVCxGridView)sender).DetailRows.ExpandRow(0);
+            };
+        });
+
+    if (ViewData["EditError"] != null) {
+        grid.SetEditErrorText((string)ViewData["EditError"]);
+    }
+}
+@grid.BindToLINQ(string.Empty, string.Empty, (s, e) => {
+    e.QueryableSource = Model;
+    e.KeyExpression = "UserId";
+}).GetHtml()

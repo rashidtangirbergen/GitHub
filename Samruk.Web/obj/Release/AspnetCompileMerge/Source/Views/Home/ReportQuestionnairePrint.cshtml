@@ -1,0 +1,19 @@
+﻿
+@Html.DevExpress().DocumentViewer(
+    settings => {
+        settings.SettingsReportViewer.PageByPage = false;
+        settings.Name = "Форма «опросник»";
+        settings.Report = (Samruk.Web.Reports.XtraReportQuestionnaire)ViewData["Report"];
+        settings.CallbackRouteValues = new
+        {
+            Controller = "Home",
+            Action = "DocumentViewerPart"
+        };
+        settings.ExportRouteValues = new
+        {
+            Controller = "Home",
+            Action = "ExportDocumentViewPart"
+        };
+
+
+    }).GetHtml()
